@@ -16,19 +16,11 @@
 [![License](https://img.shields.io/npm/l/swagger-parser.svg)](LICENSE)
 -->
 
-<table>
-<tr> 
-<td>Package</td><td>gulp-swagger</td>
-</tr>
-<tr>
-<td>Description</td>
-<td>[Gulp][gulp] plugin that parses [Swagger][swagger] specs in JSON or YAML format, validates against the official [Swagger 2.0 schema][swagger2spec], dereferences all $ref pointers, including pointers to external files and generates client-side API code.</td>
-</tr>
-<tr>
-<td>Node Version</td>
-<td>>= 0.8</td>
-</tr>
-</table>
+| | |
+| ----------- | ------------ |
+| Package     | gulp-swagger |
+| Description | [Gulp][gulp] plugin that parses [Swagger][swagger] specs in JSON or YAML format, validates against the official [Swagger 2.0 schema][swagger2spec], dereferences all $ref pointers, including pointers to external files and generates client-side API code. |
+| Node Version | >= 0.8 |
 
 Install
 --------------------------
