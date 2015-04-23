@@ -2,13 +2,13 @@
 --------------------------
 
 <!--
-[![Build Status](https://travis-ci.org/adam-lynch/gulp-swagger.png)](https://travis-ci.org/adam-lynch/gulp-swagger)
+[![Build Status](https://travis-ci.org/gersongoulart/gulp-swagger.png)](https://travis-ci.org/gersongoulart/gulp-swagger)
 
-[![Build Status](https://img.shields.io/travis/BigstickCarpet/swagger-parser.svg)](https://travis-ci.org/BigstickCarpet/swagger-parser)
+[![Build Status](https://img.shields.io/travis/gersongoulart/gulp-swagger.svg)](https://travis-ci.org/gersongoulart/gulp-swagger)
 [![Dependencies](https://img.shields.io/david/bigstickcarpet/swagger-parser.svg)](https://david-dm.org/bigstickcarpet/swagger-parser)
-[![Code Climate Score](https://img.shields.io/codeclimate/github/BigstickCarpet/swagger-parser.svg)](https://codeclimate.com/github/BigstickCarpet/swagger-parser)
+[![Code Climate Score](https://img.shields.io/codeclimate/github/gersongoulart/gulp-swagger.svg)](https://codeclimate.com/github/gersongoulart/gulp-swagger)
 [![Codacy Score](http://img.shields.io/codacy/6d686f916836433b9c013379fbe1052c.svg)](https://www.codacy.com/public/jamesmessinger/swagger-parser)
-[![Coverage Status](https://img.shields.io/coveralls/BigstickCarpet/swagger-parser.svg)](https://coveralls.io/r/BigstickCarpet/swagger-parser)
+[![Coverage Status](https://img.shields.io/coveralls/gersongoulart/gulp-swagger.svg)](https://coveralls.io/r/gersongoulart/gulp-swagger)
 
 [![Downloads](https://img.shields.io/npm/dm/swagger-parser.svg)](https://www.npmjs.com/package/swagger-parser)
 [![npm](http://img.shields.io/npm/v/swagger-parser.svg)](https://www.npmjs.com/package/swagger-parser)
@@ -94,7 +94,7 @@ See Also
 
 Contributing
 --------------------------
-I welcome any contributions, enhancements, and bug-fixes.  [File an issue](https://github.com/BigstickCarpet/swagger-parser/issues) on GitHub and [submit a pull request](https://github.com/BigstickCarpet/swagger-parser/pulls).  Use JSHint to make sure your code passes muster.  (see [.jshintrc](.jshintrc)).
+I welcome any contributions, enhancements, and bug-fixes. [File an issue](https://github.com/gersongoulart/gulp-swagger/issues) on GitHub and [submit a pull request](https://github.com/gersongoulart/gulp-swagger/pulls).
 
 License
 --------------------------
@@ -103,7 +103,7 @@ Gulp-Swagger is 100% free and open-source, under the [MIT license](LICENSE). Use
 [gulp]: http://github.com/gulpjs/gulp
 [swagger]: http://swagger.io
 [swagger2spec]: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
-[swagger-parser]: https://github.com/BigstickCarpet/swagger-parser
+[swagger-parser]: https://github.com/gersongoulart/gulp-swagger
 [swagger-js-codegen]: https://github.com/wcandillon/swagger-js-codegen
 
 
