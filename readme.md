@@ -1,21 +1,6 @@
 # gulp-swagger v0.0.1
 --------------------------
 
-[![Build Status](https://travis-ci.org/gersongoulart/gulp-swagger.png)](https://travis-ci.org/gersongoulart/gulp-swagger)
-
-<!--
-[![Build Status](https://img.shields.io/travis/gersongoulart/gulp-swagger.svg)](https://travis-ci.org/gersongoulart/gulp-swagger)
-[![Dependencies](https://img.shields.io/david/bigstickcarpet/swagger-parser.svg)](https://david-dm.org/bigstickcarpet/swagger-parser)
-[![Code Climate Score](https://img.shields.io/codeclimate/github/gersongoulart/gulp-swagger.svg)](https://codeclimate.com/github/gersongoulart/gulp-swagger)
-[![Codacy Score](http://img.shields.io/codacy/6d686f916836433b9c013379fbe1052c.svg)](https://www.codacy.com/public/jamesmessinger/swagger-parser)
-[![Coverage Status](https://img.shields.io/coveralls/gersongoulart/gulp-swagger.svg)](https://coveralls.io/r/gersongoulart/gulp-swagger)
-
-[![Downloads](https://img.shields.io/npm/dm/swagger-parser.svg)](https://www.npmjs.com/package/swagger-parser)
-[![npm](http://img.shields.io/npm/v/swagger-parser.svg)](https://www.npmjs.com/package/swagger-parser)
-[![Bower](http://img.shields.io/bower/v/swagger-parser.svg)](#bower)
-[![License](https://img.shields.io/npm/l/swagger-parser.svg)](LICENSE)
--->
-
 | | |
 | ----------- | ------------ |
 | Package     | gulp-swagger |
