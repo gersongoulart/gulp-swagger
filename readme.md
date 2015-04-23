@@ -1,5 +1,6 @@
 # gulp-swagger v0.0.1
 --------------------------
+
 [![Build Status](https://travis-ci.org/gersongoulart/gulp-swagger.png)](https://travis-ci.org/gersongoulart/gulp-swagger)
 
 <!--
