@@ -1,9 +1,8 @@
 # gulp-swagger v0.0.1
 --------------------------
-
-<!--
 [![Build Status](https://travis-ci.org/gersongoulart/gulp-swagger.png)](https://travis-ci.org/gersongoulart/gulp-swagger)
 
+<!--
 [![Build Status](https://img.shields.io/travis/gersongoulart/gulp-swagger.svg)](https://travis-ci.org/gersongoulart/gulp-swagger)
 [![Dependencies](https://img.shields.io/david/bigstickcarpet/swagger-parser.svg)](https://david-dm.org/bigstickcarpet/swagger-parser)
 [![Code Climate Score](https://img.shields.io/codeclimate/github/gersongoulart/gulp-swagger.svg)](https://codeclimate.com/github/gersongoulart/gulp-swagger)
@@ -16,19 +15,11 @@
 [![License](https://img.shields.io/npm/l/swagger-parser.svg)](LICENSE)
 -->
 
-<table>
-<tr> 
-<td>Package</td><td>gulp-swagger</td>
-</tr>
-<tr>
-<td>Description</td>
-<td>[Gulp][gulp] plugin that parses [Swagger][swagger] specs in JSON or YAML format, validates against the official [Swagger 2.0 schema][swagger2spec], dereferences all $ref pointers, including pointers to external files and generates client-side API code.</td>
-</tr>
-<tr>
-<td>Node Version</td>
-<td>>= 0.8</td>
-</tr>
-</table>
+| | |
+| ----------- | ------------ |
+| Package     | gulp-swagger |
+| Description | [Gulp][gulp] plugin that parses [Swagger][swagger] specs in JSON or YAML format, validates against the official [Swagger 2.0 schema][swagger2spec], dereferences all $ref pointers, including pointers to external files and generates client-side API code. |
+| Node Version | >= 0.8 |
 
 Install
 --------------------------
@@ -105,5 +96,3 @@ Gulp-Swagger is 100% free and open-source, under the [MIT license](LICENSE). Use
 [swagger2spec]: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
 [swagger-parser]: https://github.com/gersongoulart/gulp-swagger
 [swagger-js-codegen]: https://github.com/wcandillon/swagger-js-codegen
-
-
