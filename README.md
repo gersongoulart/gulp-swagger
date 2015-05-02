@@ -34,7 +34,32 @@ gulp.task('schema', function() {
 gulp.task('default', ['schema']);
 ```
 
-Generate client-side API based on schema:
+
+Generate client-side API based on schema for AngularJS:
+
+```js
+var gulp = require('gulp');
+var swagger = require('gulp-swagger');
+
+gulp.task('api', function() {
+  gulp.src('./src/api/index.yaml')
+    .pipe(swagger({
+      filename: 'api.js',
+      type: 'angular' // type can be 'angular', 'node' or 'custom' (default).
+    }))
+    .pipe(gulp.dest('./api'));
+});
+
+gulp.task('default', ['api']);
+
+// Rerun the task when a file changes
+gulp.task('watch', function () {
+  gulp.watch('./src/api/*.yaml', ['api']);
+});
+```
+
+
+Generate client-side API based on schema using custom templates:
 
 ```js
 var gulp = require('gulp');
@@ -62,6 +87,7 @@ gulp.task('watch', function () {
   gulp.watch('./src/api/*.yaml', ['api']);
 });
 ```
+
 
 Differently from [Swagger to JS Codegen][swagger-js-codegen], Gulp-Swagger does not require the template field to be on the format `template: { class: "...", method: "...", request: "..." }`. You can pass either of them as you want. Eg. say that your custom `method` and `request` are super simple and you only really need one `class` template, you could only pass `template: { class: "..." }`. For this reason, as a shortcut, `template` can also be a string: `template: "..."`
 
@@ -93,6 +119,7 @@ gulp.task('watch', function () {
   gulp.watch('./src/api/*.yaml', ['api']);
 });
 ```
+
 
 So inside your mustache template, you can:
 
@@ -226,10 +253,16 @@ var schemas = {
 ```
 
 
+Example
+--------------------------
+The provided example implements client-side JSON schema validation using [tv4][tv4] of both Ajax requests and responses.
+
+To play with the example, download this repo. Point your terminal to the example folder and run: `$ npm run setup`. Then open `http://localhost:8888` in your browser, open the dev tools console and play around with the `API` global object.
+
+
 Roadmap
 --------------------------
 - [ ] Test coverage
-- [ ] Implementation Examples
 - [ ] Built-in schema validation
 
 
@@ -256,3 +289,4 @@ Gulp-Swagger is 100% free and open-source, under the [MIT license](LICENSE). Use
 [swagger2spec]: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
 [swagger-parser]: https://github.com/gersongoulart/gulp-swagger
 [swagger-js-codegen]: https://github.com/wcandillon/swagger-js-codegen
+[tv4]: https://github.com/geraintluff/tv4

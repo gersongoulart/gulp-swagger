@@ -1,0 +1,124 @@
+/**
+ * {{&summary}}
+ * @method
+ * @name {{&className}}#{{&methodName}}
+{{#parameters}}
+{{^isSingleton}} * @param {{=<% %>=}}{<%&type%>}<%={{ }}=%> {{&camelCaseName}} - {{&description}}{{/isSingleton}}
+{{/parameters}}
+ * 
+ */
+{{&className}}.{{&methodName}} = function(parameters){
+	parameters = parameters || {};
+
+	return new Promise(function (resolve, reject) {
+		var path = '{{&path}}';
+		var schema = schemas[path];
+		
+		var body;
+		var queryParameters = {};
+		var headers = {};
+		var form = {};
+
+		{{#isSecure}}
+			if (this.token.isQuery) {
+				queryParameters[this.token.headerOrQueryName] = this.token.value;
+			}
+			else if (this.token.headerOrQueryName) {
+				headers[this.token.headerOrQueryName] = this.token.value;    
+			}
+			else {
+				headers['Authorization'] = 'Bearer ' + this.token.value;
+			}
+		{{/isSecure}}
+
+		{{#parameters}}
+		   
+			{{#isQueryParameter}}
+				{{#isSingleton}}
+					queryParameters.{{&name}} = '{{&singleton}}';
+				{{/isSingleton}}
+				{{^isSingleton}}
+					{{#isPatternType}}
+						Object.keys(parameters).forEach(function(parameterName) {
+							if ( new RegExp('{{&pattern}}').test(parameterName) ) {
+								queryParameters[parameterName] = parameters[parameterName];
+							}
+						});
+					{{/isPatternType}}
+					{{^isPatternType}}
+						if ( parameters.{{&camelCaseName}} !== undefined ) {
+							queryParameters.{{&name}} = parameters.{{&camelCaseName}};
+						}
+					{{/isPatternType}}
+				{{/isSingleton}}
+			{{/isQueryParameter}}
+			
+			{{#isPathParameter}}
+				path = path.replace('{{=<% %>=}}{<%&name%>}<%={{ }}=%>', parameters.{{&camelCaseName}});
+			{{/isPathParameter}}
+			
+			{{#isHeaderParameter}}
+				{{#isSingleton}}
+					headers.{{&name}} = '{{&singleton}}';
+				{{/isSingleton}}
+				{{^isSingleton}}
+					if ( parameters.{{&camelCaseName}} !== undefined ) {
+						headers.{{&name}} = parameters.{{&camelCaseName}};
+					}
+				{{/isSingleton}}
+			{{/isHeaderParameter}}
+			
+			{{#isBodyParameter}}
+				if ( parameters.{{&camelCaseName}} !== undefined ) {
+					body = parameters.{{&camelCaseName}};
+				}
+			{{/isBodyParameter}}
+
+			 {{#isFormParameter}}
+				{{#isSingleton}}
+					form.{{&name}} = '{{&singleton}}';
+				{{/isSingleton}}
+				{{^isSingleton}}
+					if ( parameters.{{&camelCaseName}} !== undefined ) {
+						form.{{&name}} = parameters.{{&camelCaseName}};
+					}
+				{{/isSingleton}}
+			{{/isFormParameter}}
+
+			{{#required}}
+				if ( parameters.{{&camelCaseName}} === undefined ) {
+					return reject(new APIError('Missing required {{&type}} parameter: {{&camelCaseName}} ({{&description}}).'));
+				}
+			{{/required}}
+	 
+		{{/parameters}}
+		
+		if ( parameters.$queryParameters ) {
+			Object.keys(parameters.$queryParameters)
+				.forEach(function(parameterName){
+					var parameter = parameters.$queryParameters[parameterName];
+					queryParameters[parameterName] = parameter;
+				});
+		}
+
+		var req = {
+			method: '{{method}}',
+			url: domain + path,
+			qs: queryParameters,
+			headers: headers,
+			body: body,
+			schema: schema
+		};
+
+		if ( Object.keys(form).length > 0 ) {
+			req.form = form;
+		}
+
+		if ( typeof req.body === 'object' ) {
+			req.headers['Content-Type'] = 'application/json;charset=utf-8';
+			req.json = true;
+		}
+
+		ajax(req).then(resolve).catch(reject);
+	});
+};

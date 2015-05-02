@@ -1,0 +1,147 @@
+/*jshint -W069 */
+'use strict';
+
+import tv4 from 'tv4';
+import Promise from 'bluebird';
+import nanoajax from 'nanoajax';
+
+// TypedError class which other typed errors subclass from.
+// https://gist.github.com/daliwali/09ca19032ab192524dc6
+class TypedError extends Error {
+	constructor (message) {
+		if ( 'object' === typeof message ) {
+			if ( 'length' in message ) {
+				message = message.map(JSON.stringify).join(' ');
+			}
+			else {
+				message = JSON.stringify(message);
+			}
+		}
+
+		super();
+		Object.defineProperty(this, 'message', { value: message });
+		Object.defineProperty(this, 'name', { value: this.constructor.name });
+	}
+ 
+	get name () {
+		return this.constructor.name;
+	}
+}
+ 
+export class AjaxError extends TypedError {}
+
+export class APIError extends TypedError {}
+
+export function validate (body, schema, details) {
+	if ( !schema ) {
+		throw new AjaxError([
+			'There is no schema available for the request',
+			details.request.url + ':',
+			details.request.method + ':',
+			details.code ? 'responses: ' + details.code : 'parameters: in: body'
+		]);
+	}
+
+	var checkRecursive = false;
+	var banUnknownProperties = true;
+	var isValid = tv4.validate(body, schema, checkRecursive, banUnknownProperties);
+
+	return isValid || tv4.error;
+}
+
+export function ajax (request) {
+	var requestMethod = request.method.toLowerCase();
+	var schemas = request.schema[requestMethod];
+
+	return new Promise(function ajaxPromise (resolve, reject) {
+		function validateRequest (request) {
+			// JSON Schema request validation
+			if ( request.body ) {
+				var isValidRequest = validate(request.body, schemas.request, { request: request });
+
+				if ( isValidRequest !== true ) {
+					reject(new APIError(isValidRequest));
+				}
+			}
+
+			try {
+				request.body = JSON.stringify(request.body);
+			}
+			catch(e) {}
+
+			return request;
+		}
+
+		function validateResponse (code, response, xhr) {
+			try {
+				response = JSON.parse(response);
+			}
+			catch(e) {
+				reject(new APIError([
+					'Request response is not a valid JSON',
+					request.url + ':',
+					request.method + ':',
+					code ? 'responses: ' + code : 'parameters: in: body'
+				]));
+			}
+
+			// JSON Schema response validation
+			var responseSchema = schemas.responses[code] || schemas.responses['default'];
+			var isValidResponse = validate(response, responseSchema, { request: request, response: response, code: code });
+
+			if ( isValidResponse !== true ) {
+				reject(new APIError(isValidResponse));
+			}
+			else if ( code >= 200 && code <= 299 ) {
+				resolve(response);
+			}
+			else {
+				reject(new AjaxError([
+					code,
+					request.url,
+					response
+				]));
+			}
+		}
+
+		nanoajax.ajax( validateRequest(request), validateResponse );
+	});
+}
+
+
+/**
+ * {{&description}}
+ * @class {{&className}}
+ * @param {(string|object)} [domainOrOptions] - The project domain or options object. If object, see the object's optional properties.
+ * @param {string} [domainOrOptions.domain] - The project domain
+ * @param {object} [domainOrOptions.token] - auth token - object with value property and optional headerOrQueryName and isQuery properties
+ */
+var domain = '/api';
+var schemas = {{&JSONSchemas}};
+var {{&className}} = {};
+
+{{#isSecure}}
+	/**
+	 * Set Token
+	 * @method
+	 * @name {{&className}}#setToken
+	 * @param {string} value - token's value
+	 * @param {string} headerOrQueryName - the header or query name to send the token at
+	 * @param {boolean} isQuery - true if send the token as query param, otherwise, send as header param
+	 *
+	 */
+	{{&className}}.setToken = function (value, headerOrQueryName, isQuery) {
+		this.token.value = value;
+		this.token.headerOrQueryName = headerOrQueryName;
+		this.token.isQuery = isQuery;
+	};
+{{/isSecure}}
+
+{{#methods}}
+	{{> method}}
+{{/methods}}
+
+// Expose global object for playtime at console.
+window.{{&className}} = {{&className}};
+
+export default {{&className}};
