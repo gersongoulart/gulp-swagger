@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "gulp": "^3.8.11",
-    "gulp-swagger": "^0.0.4"
+    "gulp-swagger": "^0.0.5"
   }
 }

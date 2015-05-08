@@ -3,6 +3,7 @@ var path = require('path');
 var through = require('through2');
 var gutil = require('gulp-util');
 var parser = require('swagger-parser');
+var spec = require('swagger-tools').specs.v2; // Validate using the latest Swagger 2.x specification
 var CodeGen = require('swagger-js-codegen').CodeGen;
 var PLUGIN_NAME = 'gulp-swagger';
 
@@ -81,74 +82,135 @@ module.exports = function gulpSwagger (filename, options) {
       throw new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported');
     }
 
-    parser.parse(file.history[0], function parseSpec (error, swaggerSpec) {
+    // Load and parse swagger schema main file.
+    parser.parse(file.history[0], {
+      dereference$Refs: false,
+      validateSchema: false,
+      strictValidation: false
+    }, function parseSchema (error, swaggerObject) {
       if ( error ) {
         cb(new gutil.PluginError(PLUGIN_NAME, error));
         return;
       }
 
-      var fileBuffer;
+      // Validate resulting schema
+      spec.validate(swaggerObject, function validateSchema (err, result) {
+        if (err) {
+          cb(new gutil.PluginError(PLUGIN_NAME, err));
+          return;
+        }
 
-      if ( useCodeGen ) {
-        var codeGenFunction = 'get' +
-          codeGenSettings.type[0].toUpperCase() +
-          codeGenSettings.type.slice(1, codeGenSettings.type.length) +
-          'Code';
+        if ( typeof result !== 'undefined' ) {
+          if ( result.errors.length > 0 ) {
+            gutil.log(
+              gutil.colors.red([
+                '',
+                '',
+                'Swagger Schema Errors (' + result.errors.length + ')',
+                '--------------------------',
+                result.errors.map(function (err) {
+                  return '#/' + err.path.join('/') + ': ' + err.message +
+                    '\n' +
+                    JSON.stringify(err) +
+                    '\n';
+                }).join('\n'),
+                ''
+              ].join('\n')),
+              ''
+            );
+          }
 
-        codeGenSettings.esnext = true;
-        codeGenSettings.swagger = swaggerSpec;
-        delete codeGenSettings.type;
+          if ( result.warnings.length > 0 ) {
+            gutil.log(
+              gutil.colors.yellow([
+                '',
+                '',
+                'Swagger Schema Warnings (' + result.warnings.length + ')',
+                '------------------------',
+                result.warnings.map(function (warn) {
+                  return '#/' + warn.path.join('/') + ': ' + warn.message +
+                    '\n' +
+                    JSON.stringify(warn) +
+                    '\n';
+                }).join('\n'),
+                ''
+              ].join('\n')),
+              ''
+            );
+          }
 
-        codeGenSettings.mustache = codeGenSettings.mustache || {};
-        // Allow swagger schema to be easily accessed inside templates.
-        codeGenSettings.mustache.swagger = JSON.stringify(swaggerSpec);
-        // Allow each individual JSON schema to be easily accessed inside templates (for validation purposes).
-        codeGenSettings.mustache.JSONSchemas = JSON.stringify(
-          Object.keys(swaggerSpec.paths)
-            .reduce(function reducePaths (newPathCollection, currentPath) {
-              var pathMethods = swaggerSpec.paths[currentPath] || {};
-              var pathSchemas = Object.keys(pathMethods)
-                .reduce(function reduceMethods (newMethodCollection, currentMethod) {
-                  var methodParameters = (pathMethods[currentMethod].parameters || [])
-                    .filter(function filterBodyParameter (parameter) {
-                      return parameter.in === 'body';
-                    })[0] || {};
-                  var methodResponses = pathMethods[currentMethod].responses || {};
-                  var methodSchemas = {
-                    request: methodParameters.schema,
-                    responses: Object.keys(methodResponses)
-                      .reduce(function reduceMethods (newResponsesCollection, currentResponse) {
-                        var responseSchema = methodResponses[currentResponse].schema || {};
+          if ( result.errors.length > 0 ) {
+            cb(new gutil.PluginError(PLUGIN_NAME, 'The Swagger schema is invalid'));
+            return;
+          }
+        }
 
-                        newResponsesCollection[currentResponse] = responseSchema;
-                        return newResponsesCollection;
-                      }, {})
-                  };
+        // Swagger document is valid
+        var fileBuffer;
 
-                  newMethodCollection[currentMethod] = methodSchemas;
-                  return newMethodCollection;
-                }, {});
+        if ( useCodeGen ) {
+          var codeGenFunction = 'get' +
+            codeGenSettings.type[0].toUpperCase() +
+            codeGenSettings.type.slice(1, codeGenSettings.type.length) +
+            'Code';
 
-              newPathCollection[currentPath] = pathSchemas;
-              return newPathCollection;
-            }, {})
-        );
+          codeGenSettings.esnext = true;
+          codeGenSettings.swagger = swaggerObject;
+          delete codeGenSettings.type;
 
-        fileBuffer = CodeGen[codeGenFunction](codeGenSettings);
-      }
-      else {
-        fileBuffer = JSON.stringify(swaggerSpec);
-      }
+          codeGenSettings.mustache = codeGenSettings.mustache || {};
+          // Allow swagger schema to be easily accessed inside templates.
+          codeGenSettings.mustache.swagger = JSON.stringify(swaggerObject);
+          // Allow each individual JSON schema to be easily accessed inside templates (for validation purposes).
+          codeGenSettings.mustache.JSONSchemas = JSON.stringify(
+            Object.keys(swaggerObject.paths)
+              .reduce(function reducePaths (newPathCollection, currentPath) {
+                var pathMethods = swaggerObject.paths[currentPath] || {};
+                var pathSchemas = Object.keys(pathMethods)
+                  .reduce(function reduceMethods (newMethodCollection, currentMethod) {
+                    var methodParameters = (pathMethods[currentMethod].parameters || [])
+                      .filter(function filterBodyParameter (parameter) {
+                        return parameter.in === 'body';
+                      })[0] || {};
+                    var methodResponses = pathMethods[currentMethod].responses || {};
+                    var methodSchemas = {
+                      request: methodParameters.schema,
+                      responses: Object.keys(methodResponses)
+                        .reduce(function reduceMethods (newResponsesCollection, currentResponse) {
+                          var responseSchema = methodResponses[currentResponse].schema || {};
 
-      // Return processed file to gulp
-      _this.push(new gutil.File({
-        cwd: file.cwd,
-        base: file.base,
-        path: path.join(file.base, filename),
-        contents: new Buffer(fileBuffer)
-      }));
+                          newResponsesCollection[currentResponse] = responseSchema;
+                          return newResponsesCollection;
+                        }, {})
+                    };
 
-      cb();
+                    newMethodCollection[currentMethod] = methodSchemas;
+                    return newMethodCollection;
+                  }, {});
+
+                newPathCollection[currentPath] = pathSchemas;
+                return newPathCollection;
+              }, {})
+          );
+
+          fileBuffer = CodeGen[codeGenFunction](codeGenSettings);
+        }
+        else {
+          fileBuffer = JSON.stringify(swaggerObject);
+        }
+
+        // Return processed file to gulp
+        _this.push(new gutil.File({
+          cwd: file.cwd,
+          base: file.base,
+          path: path.join(file.base, filename),
+          contents: new Buffer(fileBuffer)
+        }));
+
+        cb();
+
+      });
     });
+
   });
 };
