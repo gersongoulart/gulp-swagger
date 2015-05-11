@@ -82,7 +82,7 @@ module.exports = function gulpSwagger (filename, options) {
       throw new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported');
     }
 
-    // Load and parse swagger schema main file.
+    // Load swagger main file and resolve external $refs
     parser.parse(file.history[0], {
       dereference$Refs: false,
       validateSchema: false,
@@ -146,69 +146,73 @@ module.exports = function gulpSwagger (filename, options) {
         }
 
         // Swagger document is valid
-        var fileBuffer;
+        // dereference all $refs
+        parser.parse(swaggerObject, function parseSchema (error, swaggerObject) {
+          var fileBuffer;
 
-        if ( useCodeGen ) {
-          var codeGenFunction = 'get' +
-            codeGenSettings.type[0].toUpperCase() +
-            codeGenSettings.type.slice(1, codeGenSettings.type.length) +
-            'Code';
+          if ( useCodeGen ) {
+            var codeGenFunction = 'get' +
+              codeGenSettings.type[0].toUpperCase() +
+              codeGenSettings.type.slice(1, codeGenSettings.type.length) +
+              'Code';
 
-          codeGenSettings.esnext = true;
-          codeGenSettings.swagger = swaggerObject;
-          delete codeGenSettings.type;
+            codeGenSettings.esnext = true;
+            codeGenSettings.swagger = swaggerObject;
+            delete codeGenSettings.type;
 
-          codeGenSettings.mustache = codeGenSettings.mustache || {};
-          // Allow swagger schema to be easily accessed inside templates.
-          codeGenSettings.mustache.swagger = JSON.stringify(swaggerObject);
-          // Allow each individual JSON schema to be easily accessed inside templates (for validation purposes).
-          codeGenSettings.mustache.JSONSchemas = JSON.stringify(
-            Object.keys(swaggerObject.paths)
-              .reduce(function reducePaths (newPathCollection, currentPath) {
-                var pathMethods = swaggerObject.paths[currentPath] || {};
-                var pathSchemas = Object.keys(pathMethods)
-                  .reduce(function reduceMethods (newMethodCollection, currentMethod) {
-                    var methodParameters = (pathMethods[currentMethod].parameters || [])
-                      .filter(function filterBodyParameter (parameter) {
-                        return parameter.in === 'body';
-                      })[0] || {};
-                    var methodResponses = pathMethods[currentMethod].responses || {};
-                    var methodSchemas = {
-                      request: methodParameters.schema,
-                      responses: Object.keys(methodResponses)
-                        .reduce(function reduceMethods (newResponsesCollection, currentResponse) {
-                          var responseSchema = methodResponses[currentResponse].schema || {};
+            codeGenSettings.mustache = codeGenSettings.mustache || {};
+            // Allow swagger schema to be easily accessed inside templates.
+            codeGenSettings.mustache.swaggerObject = swaggerObject;
+            codeGenSettings.mustache.swaggerJSON = JSON.stringify(swaggerObject);
+            // Allow each individual JSON schema to be easily accessed inside templates (for validation purposes).
+            codeGenSettings.mustache.JSONSchemas = JSON.stringify(
+              Object.keys(swaggerObject.paths)
+                .reduce(function reducePaths (newPathCollection, currentPath) {
+                  var pathMethods = swaggerObject.paths[currentPath] || {};
+                  var pathSchemas = Object.keys(pathMethods)
+                    .reduce(function reduceMethods (newMethodCollection, currentMethod) {
+                      var methodParameters = (pathMethods[currentMethod].parameters || [])
+                        .filter(function filterBodyParameter (parameter) {
+                          return parameter.in === 'body';
+                        })[0] || {};
+                      var methodResponses = pathMethods[currentMethod].responses || {};
+                      var methodSchemas = {
+                        request: methodParameters.schema,
+                        responses: Object.keys(methodResponses)
+                          .reduce(function reduceMethods (newResponsesCollection, currentResponse) {
+                            var responseSchema = methodResponses[currentResponse].schema || {};
 
-                          newResponsesCollection[currentResponse] = responseSchema;
-                          return newResponsesCollection;
-                        }, {})
-                    };
+                            newResponsesCollection[currentResponse] = responseSchema;
+                            return newResponsesCollection;
+                          }, {})
+                      };
 
-                    newMethodCollection[currentMethod] = methodSchemas;
-                    return newMethodCollection;
-                  }, {});
+                      newMethodCollection[currentMethod] = methodSchemas;
+                      return newMethodCollection;
+                    }, {});
 
-                newPathCollection[currentPath] = pathSchemas;
-                return newPathCollection;
-              }, {})
-          );
+                  newPathCollection[currentPath] = pathSchemas;
+                  return newPathCollection;
+                }, {})
+            );
 
-          fileBuffer = CodeGen[codeGenFunction](codeGenSettings);
-        }
-        else {
-          fileBuffer = JSON.stringify(swaggerObject);
-        }
+            fileBuffer = CodeGen[codeGenFunction](codeGenSettings);
+          }
+          else {
+            fileBuffer = JSON.stringify(swaggerObject);
+          }
 
-        // Return processed file to gulp
-        _this.push(new gutil.File({
-          cwd: file.cwd,
-          base: file.base,
-          path: path.join(file.base, filename),
-          contents: new Buffer(fileBuffer)
-        }));
+          // Return processed file to gulp
+          _this.push(new gutil.File({
+            cwd: file.cwd,
+            base: file.base,
+            path: path.join(file.base, filename),
+            contents: new Buffer(fileBuffer)
+          }));
 
-        cb();
+          cb();
 
+        });
       });
     });
 

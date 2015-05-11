@@ -1,4 +1,4 @@
-# gulp-swagger v0.0.5
+# gulp-swagger v0.0.6
 --------------------------
 
 | | |
@@ -89,9 +89,7 @@ gulp.task('watch', function () {
 ```
 
 
-Differently from [Swagger to JS Codegen][swagger-js-codegen], Gulp-Swagger does not require the template field to be on the format `template: { class: "...", method: "...", request: "..." }`. You can pass either of them as you want. Eg. say that your custom `method` and `request` are super simple and you only really need one `class` template, you could only pass `template: { class: "..." }`. For this reason, as a shortcut, `template` can also be a string: `template: "..."`
-
-Gulp-Swagger allows to you pass mustache options along to Codegen. Gulp-Swagger also passes the swagger schema as well as a compilation of all JSON-schemas to mustache options. This is useful if you want to carry schema validation validation on the client-side:
+Differently from [Swagger to JS Codegen][swagger-js-codegen], Gulp-Swagger does not require the template field to be on the format `template: { class: "...", method: "...", request: "..." }`. You can pass either of them as you want. Eg. say that your custom `method` and `request` are super simple and you only really need one `class` template, you could only pass `template: { class: "..." }`. For this reason, as a shortcut, `template` can also be a string: `template: "..."`. Gulp-Swagger allows to you pass mustache options along to Codegen.
 
 ```js
 var gulp = require('gulp');
@@ -104,8 +102,8 @@ gulp.task('api', function() {
       codegen: {
         template: './src/templates/api.mustache',
         mustache: {
-          // Silly E.g. Pasing variables to mustache to envify the templates...
-          process: { env: { NODE_ENV: process.env.NODE_ENV } }
+          // E.g. Passing variables to mustache to envify the templates...
+          NODE_ENV: process.env.NODE_ENV
         }
       }
     }))
@@ -120,15 +118,15 @@ gulp.task('watch', function () {
 });
 ```
 
-
-So inside your mustache template, you can:
+Gulp-Swagger also passes the swagger schema to mustache options, both as an object (`swaggerObject`) and as a stringified JSON (`swaggerJSON`). Better even, there's also a compilation of all JSON-schemas passed to mustache options, handy if you want to carry on schema validation on the client-side. So inside your mustache template, you can do things like:
 
 ```
-var swagger = {{&swagger}};
-var schemas = {{&JSONSchemas}};
+var basePath = '{{&swaggerObject.basePath}}'; // swagger js object you can traverse
+var swagger = {{&swaggerJSON}}; // swagger schema, JSON-stringified
+var schemas = {{&JSONSchemas}}; // compilation of all request/response body JSON schemas, JSON-stringified
 ```
 
-The `JSONSchemas` mustache variable will render as somehing like:
+The `JSONSchemas` mustache variable will render as:
 
 ```
 var schemas = {
@@ -288,5 +286,6 @@ Gulp-Swagger is 100% free and open-source, under the [MIT license](LICENSE). Use
 [swagger]: http://swagger.io
 [swagger2spec]: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
 [swagger-parser]: https://github.com/gersongoulart/gulp-swagger
+[swagger-tools]: https://github.com/apigee-127/swagger-tools
 [swagger-js-codegen]: https://github.com/wcandillon/swagger-js-codegen
 [tv4]: https://github.com/geraintluff/tv4
