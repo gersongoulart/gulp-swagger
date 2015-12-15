@@ -1,10 +1,9 @@
 {
-  "name": "@material-dev/gulp-swagger",
+  "name": "gulp-swagger",
   "version": "0.0.7",
-  "homepage": "http://github.com/MaterialDev/gulp-swagger",
-  "description": "Gulp plugin that parses Swagger specs in JSON or YAML format, validates against the official Swagger 2.0 schema, dereferences all $ref pointers, including pointers to external files and generates client-side API code.  Forked from gersongoulart/gulp-swagger.",
+  "homepage": "http://github.com/gersongoulart/gulp-swagger",
+  "description": "Gulp plugin that parses Swagger specs in JSON or YAML format, validates against the official Swagger 2.0 schema, dereferences all $ref pointers, including pointers to external files and generates client-side API code.",
   "main": "./index.js",
-  "private": true,
   "dependencies": {
     "gulp-util": "*",
     "swagger-js-codegen": "1.1.3",
@@ -14,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/MaterialDev/gulp-swagger.git"
+    "url": "git://github.com/gersongoulart/gulp-swagger.git"
   },
   "keywords": [
     "gulp",
@@ -23,10 +22,10 @@
     "swagger",
     "codegen"
   ],
-  "author": "Richard Reedy",
+  "author": "Gerson Goulart <gerson.goulart@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "http://github.com/MaterialDev/gulp-swagger/issues"
+    "url": "http://github.com/gersongoulart/gulp-swagger/issues"
   },
   "engines": {
     "node": ">=0.8"
