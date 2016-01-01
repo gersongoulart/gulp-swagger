@@ -19,7 +19,7 @@ module.exports = function gulpSwagger (filename, options) {
     throw new gutil.PluginError(PLUGIN_NAME, 'A file name is required');
   }
 
-  options = options || {};
+  options = options || { derefBeforeParsing: false };
 
   // Flag if user actually wants to use codeGen or just parse the schema and get json back.
   var useCodeGen = 'object' === typeof options.codegen;
@@ -84,7 +84,7 @@ module.exports = function gulpSwagger (filename, options) {
 
     // Load swagger main file and resolve external $refs
     parser.parse(file.history[0], {
-      dereference$Refs: false,
+      dereference$Refs: options.derefBeforeParsing,
       validateSchema: false,
       strictValidation: false
     }, function parseSchema (error, swaggerObject) {
