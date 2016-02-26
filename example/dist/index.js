@@ -15,7 +15,9 @@ Object.keys(API).reduce(function (previous, current) {
 	'╔═╗┬ ┬┬  ┌─┐   ╔═╗┬ ┬┌─┐┌─┐┌─┐┌─┐┬─┐',
 	'║ ╦│ ││  ├─┘───╚═╗│││├─┤│ ┬│ ┬├┤ ├┬┘',
 	'╚═╝└─┘┴─┘┴     ╚═╝└┴┘┴ ┴└─┘└─┘└─┘┴└─',
-	'Try invoking these available methods:'
+	'Try invoking available methods below!',
+	'(the generated method will issue a request',
+	'but there no backend, so you will see a 404)'
 ]).forEach(function logAPIMethods (method) {
 	console.log(method);
 });
