@@ -1,28 +1,30 @@
 {
   "name": "gulp-swagger-example",
-  "version": "1.0.0",
+  "version": "0.0.10",
   "description": "Gulp-Swagger example implementation",
   "author": "Gerson Goulart <gerson.goulart@gmail.com> (https://github.com/gersongoulart)",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "setup": "npm install -g gulp-cli jspm && npm install && jspm install && gulp && npm start",
-    "start": "node server.js"
-  },
-  "jspm": {
-    "directories": {},
-    "dependencies": {
-      "bluebird": "npm:bluebird@^2.9.25",
-      "nanoajax": "npm:nanoajax@^0.2.4",
-      "tv4": "npm:tv4@^1.1.9"
-    },
-    "devDependencies": {
-      "traceur": "github:jmcriffey/bower-traceur@0.0.88",
-      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.88"
-    }
+    "setup": "npm install && jspm install && npm start",
+    "start": "gulp && node server.js"
   },
   "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-swagger": "^0.0.6"
+    "gulp": "^3.9.1",
+    "gulp-swagger": "^0.0.10"
+  },
+  "dependencies": {
+    "jspm": "^0.16.30"
+  },
+  "jspm": {
+    "dependencies": {
+      "nanoajax": "npm:nanoajax@^0.4.3",
+      "tv4": "npm:tv4@^1.2.7"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   }
 }

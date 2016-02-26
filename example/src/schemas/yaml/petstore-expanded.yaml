@@ -112,9 +112,8 @@ paths:
             $ref: '#/definitions/Error'
 definitions:
   Pet:
-    required:
-      - id
-      - name
+    type:
+      object
     properties:
       id:
         type: integer
@@ -123,15 +122,12 @@ definitions:
         type: string
       tag:
         type: string
+    required:
+      - id
+      - name
   NewPet:
     allOf:
       - $ref: '#/definitions/Pet'
-      - required:
-          - name
-        properties:
-          id:
-            type: integer
-            format: int64
   Error:
     required:
       - code

@@ -18,7 +18,7 @@ http.createServer(function(request, response) {
     }
 
     if ( fs.statSync(filename).isDirectory() ) {
-      filename += '/index.html';
+      filename += '/dist/index.html';
     }
 
     fs.readFile(filename, 'binary', function(err, file) {
