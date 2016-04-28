@@ -45,7 +45,9 @@ gulp.task('api', function() {
   gulp.src('./src/api/index.yaml')
     .pipe(swagger({
       filename: 'api.js',
-      type: 'angular' // type can be 'angular', 'node' or 'custom' (default).
+      codegen: {
+        type: 'angular' // type can be 'angular', 'node' or 'custom' (default).
+      }
     }))
     .pipe(gulp.dest('./api'));
 });
