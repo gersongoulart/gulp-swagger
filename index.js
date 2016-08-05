@@ -21,16 +21,17 @@ module.exports = function gulpSwagger (filename, options) {
 
 	options = options || {};
 
-	options.resolveInternal = (typeof options.resolveInternal !== 'undefined') ? options.resolveInternal : true;
+	// expose options from swagger-parser
+	// https://github.com/BigstickCarpet/swagger-parser/blob/master/docs/options.md
+	var parserSettings = options.parser || {};
 
 	// Flag if user actually wants to use codeGen or just parse the schema and get json back.
 	var useCodeGen = typeof options.codegen === 'object';
-	var codeGenSettings;
+	var codeGenSettings = options.codegen || {};
 
 	// If user wants to use the codeGen
 	if (useCodeGen) {
 		// Allow for shortcuts by providing sensitive defaults.
-		codeGenSettings = options.codegen || {};
 		codeGenSettings.type = codeGenSettings.type || 'custom'; // type of codeGen, either: 'angular', 'node' or 'custom'.
 		codeGenSettings.moduleName = codeGenSettings.moduleName || 'API';
 		codeGenSettings.className = codeGenSettings.className || 'API';
@@ -149,9 +150,7 @@ module.exports = function gulpSwagger (filename, options) {
 
 				// Now that we know for sure the schema is 100% valid,
 				// dereference internal $refs as well.
-				swaggerParser.dereference(swaggerObject, {
-					$refs: { internal: options.resolveInternal }
-				}, function parseSchema (error, swaggerObject) {
+				swaggerParser.dereference(swaggerObject, parserSettings, function parseSchema (error, swaggerObject) {
 					if (error) {
 						callback(new gutil.PluginError(PLUGIN_NAME, error));
 						return;

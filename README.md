@@ -1,4 +1,4 @@
-# gulp-swagger v0.0.10
+# gulp-swagger v1.0.0
 --------------------------
 
 | | |
@@ -252,8 +252,17 @@ var schemas = {
 };
 ```
 
+Note: By default, the parser will dereference all internal $refs, which could result in a  bloated json when many paths share the same schema/parameters/responses, etc. You can have fine grained control over the parser by using the `parser` option which you can use to customize how the API is parsed, resolved, dereferenced, etc. For usage, please refer to the [SwaggerParser Options Documentation](https://github.com/BigstickCarpet/swagger-parser/blob/master/docs/options.md).
 
-Example
+```
+    .pipe(swagger({
+      filename: 'api.js',
+      parser: {/* swagger-parser options */}
+    })
+```
+
+
+Example Implementation
 --------------------------
 The provided example implements client-side JSON schema validation using [tv4][tv4] of both Ajax requests and responses.
 
@@ -287,7 +296,7 @@ Gulp-Swagger is 100% free and open-source, under the [MIT license](LICENSE). Use
 [gulp]: http://github.com/gulpjs/gulp
 [swagger]: http://swagger.io
 [swagger2spec]: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
-[swagger-parser]: https://github.com/gersongoulart/gulp-swagger
+[swagger-parser]: https://github.com/BigstickCarpet/swagger-parser
 [swagger-tools]: https://github.com/apigee-127/swagger-tools
 [swagger-js-codegen]: https://github.com/wcandillon/swagger-js-codegen
 [tv4]: https://github.com/geraintluff/tv4
