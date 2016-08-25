@@ -52,14 +52,15 @@ module.exports = function gulpSwagger (filename, options) {
 			codeGenSettings.template = {
 				class: template,
 				method: '',
-				request: ''
+				request: '',
+				type: ''
 			};
 		}
 
 		// Regular codeGen template object, but allowing for missing templates.
 		// (e.g. use case: if `request` is too simple, there's no need for a dedicated template file)
 		else if (typeof codeGenSettings.template === 'object') {
-			['class', 'method', 'request']
+			['class', 'method', 'request', 'type']
 				.forEach(function loadTemplateFile (tmpl) {
 					var template = codeGenSettings.template[tmpl];
 
