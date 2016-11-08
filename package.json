@@ -1,6 +1,6 @@
 {
   "name": "gulp-swagger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "http://github.com/gersongoulart/gulp-swagger",
   "description": "Gulp plugin that parses Swagger specs in JSON or YAML format, validates against the official Swagger 2.0 schema, dereferences all $ref pointers, including pointers to external files and generates client-side API code.",
   "main": "./index.js",
