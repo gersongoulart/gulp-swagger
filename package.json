@@ -10,7 +10,7 @@
   "dependencies": {
     "circular-json": "^0.3.1",
     "gulp-util": "^3.0.7",
-    "swagger-js-codegen": "^1.6.8",
+    "swagger-js-codegen": "^1.7.0",
     "swagger-parser": "^3.4.1",
     "swagger-tools": "^0.10.1",
     "through2": "^2.0.1"
