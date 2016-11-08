@@ -15,11 +15,6 @@ module.exports = function gulpSwagger (filename, options) {
 		filename = options.filename;
 	}
 
-	// File name is mandatory (otherwise gulp won't be able to write the file properly)
-	if (!filename) {
-		throw new gutil.PluginError(PLUGIN_NAME, 'A file name is required');
-	}
-
 	options = options || {};
 
 	// expose options from swagger-parser
@@ -150,7 +145,13 @@ module.exports = function gulpSwagger (filename, options) {
 				}
 
 				// Now that we know for sure the schema is 100% valid,
-				// dereference internal $refs as well.
+				// if there is not file name...
+				if (!filename) {
+					// ...return validated file to gulp without making changes to it
+					return _this.push(file);
+				}
+
+				// ...or continue by dereferencing internal $refs as well.
 				swaggerParser.dereference(swaggerObject, parserSettings, function parseSchema (error, swaggerObject) {
 					if (error) {
 						callback(new gutil.PluginError(PLUGIN_NAME, error));
@@ -208,12 +209,12 @@ module.exports = function gulpSwagger (filename, options) {
 						fileBuffer = CodeGen[codeGenFunction](codeGenSettings);
 					}
 					else {
-						try{
-								fileBuffer = JSON.stringify(swaggerObject);
-						} catch (e) {
+						try {
+							fileBuffer = JSON.stringify(swaggerObject);
+						}
+						catch (error) {
 							fileBuffer = CircularJSON.stringify(swaggerObject);
 						}
-
 					}
 
 					// Return processed file to gulp
