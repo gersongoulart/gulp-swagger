@@ -120,6 +120,16 @@ gulp.task('watch', function () {
 });
 ```
 
+Hadling Circular reference object :
+
+While parsing the JSON back from the string use "circular-json" to parse the string to JSON by filling all the circular reference.
+
+```js
+var CircularJSON = require('circular-json');
+
+CircularJSON.parse(jsonString);
+```
+
 Gulp-Swagger also passes the swagger schema to mustache options, both as an object (`swaggerObject`) and as a stringified JSON (`swaggerJSON`). Better even, there's also a compilation of all JSON-schemas passed to mustache options, handy if you want to carry on schema validation on the client-side. So inside your mustache template, you can do things like:
 
 ```
